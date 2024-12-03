@@ -35,14 +35,14 @@ rag_chain_config = {
     },
     "input_example": {
         "messages": [
-            {"role": "user", "content": "What is Apache Spark"},
-            {"role": "assistant", "content": "Apache spark is a distributed, OSS in-memory computation engine."},
-            {"role": "user", "content": "Does it support streaming?"}
+            {"role": "user", "content": "Find a candidate with expertise in Power BI and SQL for a data analytics project."},
+            {"role": "assistant", "content": "Based on the provided context, here are two profiles with SQL and PowerBI skills."},
+            {"role": "user", "content": "From the candidates you found, identify if any would be a good fit for a lead position."}
         ]
     },
     "llm_config": {
         "llm_parameters": {"max_tokens": 1500, "temperature": 0.01},
-        "llm_prompt_template": "You are a trusted assistant that helps answer questions based only on the provided information. If you do not know the answer to a question, you truthfully say you do not know.  Here is some context which might or might not help you answer: {context}.  Answer directly, do not repeat the question, do not start with something like: the answer to the question, do not add AI in front of your answer, do not say: here is the answer, do not mention the context or the question. Based on this context, answer this question: {question}",
+        "llm_prompt_template": "You are an AI assistant designed to assist in evaluating job candidates based on their resumes. Your role is to answer questions about candidates' suitability for a job based on the information provided in the resumes. If you do not know the answer, say that you do not have enough information to make an assessment. Here is some context from the resumes: {context}. Based on this context, answer the following question about the candidates: {question}. Provide a direct and concise answer. Do not repeat the question, do not start your answer with 'The answer to the question is' or any similar phrases, and do not mention the context or the question. Simply provide the information needed.",
         "llm_prompt_template_variables": ["context", "question"],
     },
     "retriever_config": {
@@ -193,7 +193,7 @@ model_config = mlflow.models.ModelConfig(development_config='rag_chain_config.ya
 # MAGIC
 # MAGIC
 # MAGIC # Prompt Template for query rewriting to allow converastion history to work - this will translate a query such as "how does it work?" after a question such as "what is spark?" to "how does spark work?".
-# MAGIC query_rewrite_template = """Based on the chat history below, we want you to generate a query for an external data source to retrieve relevant documents so that we can better answer the question. The query should be in natural language. The external data source uses similarity search to search for relevant documents in a vector space. So the query should be similar to the relevant documents semantically. Answer with only the query. Do not add explanation.
+# MAGIC query_rewrite_template = """Based on the chat history below, generate a query to search for relevant candidate profiles from the provided resumes. The query should be in natural language and reflect the user's most recent question or intent. The external data source uses similarity search in a vector space to retrieve candidate profiles, so the query should focus on the key skills, experience, and qualifications related to the job role. Answer with only the query. Do not provide any explanations or additional context.
 # MAGIC
 # MAGIC Chat history: {chat_history}
 # MAGIC
@@ -272,23 +272,26 @@ uc_registered_model_info = mlflow.register_model(model_uri=logged_chain_info.mod
 # Deploy to enable the Review APP and create an API endpoint
 deployment_info = agents.deploy(model_name=MODEL_NAME_FQN, model_version=uc_registered_model_info.version, scale_to_zero=True)
 
-instructions_to_reviewer = f"""### Instructions for Testing the our Databricks Documentation Chatbot assistant
+instructions_to_reviewer = f"""### Instructions for Testing the Candidate Matching Chatbot Assistant
 
-Your inputs are invaluable for the development team. By providing detailed feedback and corrections, you help us fix issues and improve the overall quality of the application. We rely on your expertise to identify any gaps or areas needing enhancement.
+Your feedback is crucial to the development team in improving the candidate matching functionality and overall quality of the chatbot. By providing detailed feedback, you help us identify issues and enhance the application's performance.
 
 1. **Variety of Questions**:
-   - Please try a wide range of questions that you anticipate the end users of the application will ask. This helps us ensure the application can handle the expected queries effectively.
+   - Please ask a variety of questions related to evaluating candidates, such as queries about experience, skills, job suitability, or interview questions. This ensures that the chatbot can handle different types of candidate evaluation queries effectively.
 
 2. **Feedback on Answers**:
-   - After asking each question, use the feedback widgets provided to review the answer given by the application.
-   - If you think the answer is incorrect or could be improved, please use "Edit Answer" to correct it. Your corrections will enable our team to refine the application's accuracy.
+   - After asking each question, please review the answer provided by the chatbot.
+   - If the answer is incorrect or could be more relevant, use the "Edit Answer" feature to suggest improvements. Your corrections will help the development team fine-tune the chatbot's accuracy in candidate evaluation.
 
-3. **Review of Returned Documents**:
-   - Carefully review each document that the system returns in response to your question.
-   - Use the thumbs up/down feature to indicate whether the document was relevant to the question asked. A thumbs up signifies relevance, while a thumbs down indicates the document was not useful.
+3. **Review of Candidate Profiles**:
+   - If the chatbot returns any candidate profiles, carefully assess their relevance to the question or job description.
+   - Use the thumbs up/down feature to indicate whether the profile matches the job requirements. A thumbs up means the candidate is a good match, while a thumbs down indicates the profile was not suitable.
 
-Thank you for your time and effort in testing our assistant. Your contributions are essential to delivering a high-quality product to our end users."""
+4. **Performance and Usability Feedback**:
+   - Share your experience regarding the overall performance of the assistant, including speed, accuracy, and ease of use. 
+   - If you encounter any issues with the chatbot’s ability to process large datasets or deliver useful results, please highlight them.
 
+Thank you for your time and effort in testing our assistant. Your contributions are critical in delivering a high-quality and effective product for evaluating job candidates."""
 
 # Add the user-facing instructions to the Review App
 agents.set_review_instructions(MODEL_NAME_FQN, instructions_to_reviewer)
@@ -303,7 +306,7 @@ wait_for_model_serving_endpoint_to_be_ready(deployment_info.endpoint_name)
 
 # COMMAND ----------
 
-user_list = ["quentin.ambard@databricks.com"]
+user_list = ["merve.karali@databricks.com"]
 # Set the permissions.
 agents.set_permissions(model_name=MODEL_NAME_FQN, users=user_list, permission_level=agents.PermissionLevel.CAN_QUERY)
 
