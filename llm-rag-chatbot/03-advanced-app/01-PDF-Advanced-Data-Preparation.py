@@ -51,17 +51,20 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC CREATE VOLUME IF NOT EXISTS volume_databricks_documentation;
+# MAGIC CREATE VOLUME IF NOT EXISTS volume_documentation;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC **Please navigate to the volume you created and upload the CV files there.**
 
 # COMMAND ----------
 
 # DBTITLE 1,Our pdf or docx files are available in our Volume (or DBFS)
 # List our raw PDF docs
-volume_folder =  f"/Volumes/{catalog}/{db}/volume_databricks_documentation"
-# Let's upload some pdf files to our volume as example. Change this with your own PDFs / docs.
-upload_pdfs_to_volume(volume_folder+"/databricks-pdf")
-
-display(dbutils.fs.ls(volume_folder+"/databricks-pdf"))
+volume_folder =  f"/Volumes/{catalog}/{db}/{volume_name}"
+print(volume_folder)
+display(dbutils.fs.ls(volume_folder))
 
 # COMMAND ----------
 
@@ -70,7 +73,7 @@ df = (spark.readStream
         .format('cloudFiles')
         .option('cloudFiles.format', 'BINARYFILE')
         .option("pathGlobFilter", "*.pdf")
-        .load('dbfs:'+volume_folder+"/databricks-pdf"))
+        .load('dbfs:'+volume_folder))
 
 # Write the data as a Delta table
 (df.writeStream
@@ -141,7 +144,7 @@ def parse_bytes_pypdf(raw_doc_contents_bytes: bytes):
 # COMMAND ----------
 
 # MAGIC %md 
-# MAGIC Let's start by extracting text from our PDF.
+# MAGIC Let's start by extracting text from our Databricks Documentation PDF.
 
 # COMMAND ----------
 
@@ -288,16 +291,6 @@ def get_embedding(contents: pd.Series) -> pd.Series:
   .writeStream
     .trigger(availableNow=True)
     .option("checkpointLocation", f'dbfs:{volume_folder}/checkpoints/pdf_chunk')
-    .table('databricks_pdf_documentation').awaitTermination())
-
-#Let's also add our documentation web page from the simple demo (make sure you run the quickstart demo first)
-if table_exists(f'{catalog}.{db}.databricks_documentation'):
-  (spark.readStream.option("skipChangeCommits", "true").table('databricks_documentation') #skip changes for more stable demo
-      .withColumn('embedding', get_embedding("content"))
-      .select('url', 'content', 'embedding')
-  .writeStream
-    .trigger(availableNow=True)
-    .option("checkpointLocation", f'dbfs:{volume_folder}/checkpoints/docs_chunks')
     .table('databricks_pdf_documentation').awaitTermination())
 
 # COMMAND ----------
