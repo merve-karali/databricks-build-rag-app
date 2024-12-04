@@ -1,7 +1,37 @@
-# Databricks Build RAG app Hackathon
+# Build Your LLM-Powered Chatbot with Databricks and RAG
 
-## Instructions:
-text text
+In this tutorial, you will learn how to build a chatbot assistant to help identify the most suitable candidates for projects based on their CVs. Using Retrieval Augmented Generation (RAG) and Databricks’ state-of-the-art tools, including the Databricks Foundation Models and Vector Search, you'll create a powerful solution for intelligent candidate matching.
+
+Explore this content to discover how to leverage all the Databricks Data Intelligence Platform capabilities for your GenAI Apps.
+
+You will learn:
+
+- How to extract information from unstructured documents (pdfs) and create custom chunks
+- Leverage Databricks Embedding Foundation Model to compute the chunks embeddings
+- Create a Self Managed Vector Search index and send queries to find similar documents
+- Build an advanced langchain model with chat history, leveraging Databricks Foundation Models
+- Ask external expert to test and review your chatbot with Mosaic AI Agent Evaluation review app
+- Run online llm evaluation and track your metrics with Databricks Monitoring
+
+## What is Retrieval Augmented Generation (RAG) for LLMs?
+
+<img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/rag-marchitecture.png?raw=true" width="700px" style="float: right" />
+
+RAG is a powerful and efficient GenAI technique that allows you to improve model performance by leveraging your own data (e.g., documentation specific to your business), without the need to fine-tune the model.
+
+This is done by providing your custom information as context to the LLM. This reduces hallucination and allows the LLM to produce results that provide company-specific data, without making any changes to the original LLM.
+
+RAG has shown success in chatbots and Q&A systems that need to maintain up-to-date information or access domain-specific knowledge.
+
+### RAG and Vector Search
+
+To be able to provide additional context to our LLM, we need to search for documents/articles where the answer to our user question might be.
+To do so,  a common solution is to deploy a vector database. This involves the creation of document embeddings, vectors of fixed size representing your document.<br/>
+The vectors will then be used to perform real-time similarity search during inference.
+
+
+## Cluster Setup:
+For this notebook, we recommend using the DBRX 15.4 LTS Runtime for optimal performance.
 
 ## How to test:
 Example Prompts to Test the Pipeline

@@ -9,12 +9,12 @@
 
 # COMMAND ----------
 
-VECTOR_SEARCH_ENDPOINT_NAME="one-env-shared-endpoint-16"
+VECTOR_SEARCH_ENDPOINT_NAME= "<put vector search endpoint here>"
 
 DATABRICKS_SITEMAP_URL = "https://docs.databricks.com/en/doc-sitemap.xml"
 
-catalog = "merve_hackathon" 
-dbName = db = "rag_chatbot" 
+catalog = "<put catalog name here>" 
+dbName = db =  "<put database name here>" 
 volume_name = "volume_documentation"
 
 #email = spark.sql('select current_user() as user').collect()[0]['user']

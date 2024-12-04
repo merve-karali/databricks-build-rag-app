@@ -145,6 +145,12 @@ def parse_bytes_pypdf(raw_doc_contents_bytes: bytes):
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC **Note**:
+# MAGIC Here, you can modify the function to suit your dataset and its specific requirements. Adjust the parameters and logic as needed to align with your data structure.
+
+# COMMAND ----------
+
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import Document, set_global_tokenizer
 from transformers import AutoTokenizer
@@ -356,7 +362,7 @@ else:
 
 # COMMAND ----------
 
-question = "Who knows PowerBI and SQL?"
+question = "Who knows Tableau and Salesforce?"
 
 response = deploy_client.predict(endpoint="databricks-gte-large-en", inputs={"input": [question]})
 embeddings = [e['embedding'] for e in response.data]
