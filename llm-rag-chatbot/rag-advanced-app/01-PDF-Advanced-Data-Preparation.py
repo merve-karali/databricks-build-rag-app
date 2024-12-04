@@ -127,6 +127,8 @@ df = (spark.readStream
 # DBTITLE 1,To extract our PDF,  we'll need to setup libraries in our nodes
 import warnings
 from pypdf import PdfReader
+import io
+import re
 
 def parse_bytes_pypdf(raw_doc_contents_bytes: bytes):
     try:
