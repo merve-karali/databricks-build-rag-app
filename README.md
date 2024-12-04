@@ -41,7 +41,7 @@ These prompts test the pipeline’s ability to:
 - Handle unstructured project descriptions and derive key requirements for matching.
 - This ensures the system performs effectively in real-world consultant scenarios.
 
-####**Example 1**: Finding a Person with Specific Skills
+### **Example 1**: Finding a Person with Specific Skills
 
 Initial Query:
 
