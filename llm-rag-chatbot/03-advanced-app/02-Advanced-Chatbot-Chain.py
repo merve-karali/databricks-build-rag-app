@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
-# MAGIC # 2/ Advanced chatbot with message history and filter using Langchain and DBRX Instruct
+# MAGIC # 2/ Advanced chatbot with message history and filter using Langchain and LLM Foundation Models
 # MAGIC
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/llm-rag-self-managed-flow-2.png?raw=true" style="float: right; margin-left: 10px"  width="900px;">
 # MAGIC
@@ -10,9 +10,9 @@
 # MAGIC
 # MAGIC We will improve our langchain model with the following:
 # MAGIC
-# MAGIC - Build a complete chain supporting a chat history, using Databricks DBRX Instruct input style
+# MAGIC - Build a complete chain supporting a chat history
 # MAGIC - Add a filter to only answer Databricks-related questions
-# MAGIC - Compute the embeddings with Databricks BGE models within our chain to query the self-managed Vector Search Index
+# MAGIC - Compute the embeddings with GTE models within our chain to query the self-managed Vector Search Index
 # MAGIC
 # MAGIC <!-- Collect usage data (view). Remove it to disable collection or disable tracker during installation. View README for more details.  -->
 # MAGIC <img width="1px" src="https://ppxrzfxige.execute-api.us-west-2.amazonaws.com/v1/analytics?category=data-science&org_id=1444828305810485&notebook=%2F03-advanced-app%2F02-Advanced-Chatbot-Chain&demo_name=llm-rag-chatbot&event=VIEW&path=%2F_dbdemos%2Fdata-science%2Fllm-rag-chatbot%2F03-advanced-app%2F02-Advanced-Chatbot-Chain&version=1">
