@@ -8,9 +8,7 @@
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/rag-pdf-self-managed-0.png?raw=true" style="float: right; width: 600px; margin-left: 10px">
 # MAGIC
 # MAGIC
-# MAGIC For this example, we will add Databricks ebook PDFs from [Databricks resources page](https://www.databricks.com/resources) to our knowledge database.
-# MAGIC
-# MAGIC **Note: This demo is advanced content, we strongly recommend going over the simple version first to learn the basics.**
+# MAGIC For this example, we will add custom PDFs to our knowledge database.
 # MAGIC
 # MAGIC Here are all the detailed steps:
 # MAGIC
@@ -39,7 +37,7 @@
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC ## Ingesting Databricks ebook PDFs and extracting their pages
+# MAGIC ## Ingesting the PDFs and extracting their pages
 # MAGIC
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/rag-pdf-self-managed-1.png?raw=true" style="float: right" width="500px">
 # MAGIC
@@ -115,7 +113,6 @@ df = (spark.readStream
 # MAGIC
 # MAGIC Remember that your prompt+answer should stay below your model max window size (4096 for llama2). 
 # MAGIC
-# MAGIC For more details, review the previous [../01-Data-Preparation](01-Data-Preparation) notebook. 
 # MAGIC
 # MAGIC <br/>
 # MAGIC <br style="clear: both">
@@ -144,23 +141,7 @@ def parse_bytes_pypdf(raw_doc_contents_bytes: bytes):
 # COMMAND ----------
 
 # MAGIC %md 
-# MAGIC Let's start by extracting text from our Databricks Documentation PDF.
-
-# COMMAND ----------
-
-# DBTITLE 1,Trying our text extraction function with a single pdf file
-import io
-import re
-with requests.get('https://github.com/databricks-demos/dbdemos-dataset/blob/main/llm/databricks-pdf-documentation/Databricks-Customer-360-ebook-Final.pdf?raw=true') as pdf:
-  doc = parse_bytes_pypdf(pdf.content)  
-  print(doc)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC This looks great. We'll now wrap it with a text_splitter to avoid having too big pages, and create a Pandas UDF function to easily scale that across multiple nodes.
-# MAGIC
-# MAGIC *Note that our pdf text isn't clean. To make it nicer, we could use a few extra LLM-based pre-processing steps, asking to remove unrelevant content like the list of chapters and to only keep the core text.*
+# MAGIC Let's start by extracting text from our PDFs.
 
 # COMMAND ----------
 
@@ -223,7 +204,7 @@ def read_as_chunk(batch_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
 # MAGIC
 # MAGIC Open the [Model Serving Endpoint page](/ml/endpoints) to explore and try the foundation models.
 # MAGIC
-# MAGIC For this demo, we will use the foundation model `GTE` (embeddings) and `DBRX` (chat). <br/><br/>
+# MAGIC For this demo, we will use the foundation model `GTE` (embeddings) and an LLM (chat). <br/><br/>
 # MAGIC
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/databricks-foundation-models.png?raw=true" width="600px" >
 
@@ -256,9 +237,9 @@ pprint(embeddings)
 # MAGIC %md
 # MAGIC ### Computing the chunk embeddings and saving them to our Delta Table
 # MAGIC
-# MAGIC The last step is to now compute an embedding for all our documentation chunks. Let's create an udf to compute the embeddings using the foundation model endpoint.
+# MAGIC The last step is to now compute an embedding for all our chunks. Let's create an udf to compute the embeddings using the foundation model endpoint.
 # MAGIC
-# MAGIC *Note that this part would typically be setup as a production-grade job, running as soon as a new documentation page is updated. <br/> This could be setup as a Delta Live Table pipeline to incrementally consume updates.*
+# MAGIC *Note that this part would typically be setup as a production-grade job, running as soon as a new document is updated. <br/> This could be setup as a Delta Live Table pipeline to incrementally consume updates.*
 
 # COMMAND ----------
 
@@ -306,7 +287,7 @@ def get_embedding(contents: pd.Series) -> pd.Series:
 # MAGIC
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/rag-pdf-self-managed-3.png?raw=true" style="float: right; width: 600px; margin-left: 10px">
 # MAGIC
-# MAGIC Our dataset is now ready. We chunked the documentation pages into small sections, computed the embeddings and saved it as a Delta Lake table.
+# MAGIC Our dataset is now ready. We chunked the text into small sections, computed the embeddings and saved it as a Delta Lake table.
 # MAGIC
 # MAGIC Next, we'll configure Databricks Vector Search to ingest data from this table.
 # MAGIC
@@ -319,10 +300,10 @@ def get_embedding(contents: pd.Series) -> pd.Series:
 from databricks.vector_search.client import VectorSearchClient
 vsc = VectorSearchClient()
 
-if not endpoint_exists(vsc, VECTOR_SEARCH_ENDPOINT_NAME):
-    vsc.create_endpoint(name=VECTOR_SEARCH_ENDPOINT_NAME, endpoint_type="STANDARD")
+# if not endpoint_exists(vsc, VECTOR_SEARCH_ENDPOINT_NAME):
+#     vsc.create_endpoint(name=VECTOR_SEARCH_ENDPOINT_NAME, endpoint_type="STANDARD")
 
-wait_for_vs_endpoint_to_be_ready(vsc, VECTOR_SEARCH_ENDPOINT_NAME)
+# wait_for_vs_endpoint_to_be_ready(vsc, VECTOR_SEARCH_ENDPOINT_NAME)
 print(f"Endpoint named {VECTOR_SEARCH_ENDPOINT_NAME} is ready.")
 
 # COMMAND ----------
@@ -375,7 +356,7 @@ else:
 
 # COMMAND ----------
 
-question = "How can I track billing usage on my workspaces?"
+question = "Who knows PowerBI and SQL?"
 
 response = deploy_client.predict(endpoint="databricks-gte-large-en", inputs={"input": [question]})
 embeddings = [e['embedding'] for e in response.data]
