@@ -28,6 +28,13 @@
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC This is where we define the RAG chain configurations for your chatbot.
+# MAGIC Please adjust the LLM prompt template below to suit your specific use case and dataset.
+# MAGIC
+
+# COMMAND ----------
+
 rag_chain_config = {
     "databricks_resources": {
         "llm_endpoint_name": "databricks-meta-llama-3-1-70b-instruct",
@@ -262,6 +269,11 @@ chain.invoke(model_config.get("input_example"))
 
 MODEL_NAME = "rag_demo_advanced"
 MODEL_NAME_FQN = f"{catalog}.{db}.{MODEL_NAME}"
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Let's now deploy the Mosaic AI **Agent Evaluation review application** using the model we just created!
 
 # COMMAND ----------
 

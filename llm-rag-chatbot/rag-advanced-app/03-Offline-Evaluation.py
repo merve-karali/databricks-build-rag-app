@@ -35,8 +35,6 @@
 # MAGIC
 # MAGIC *Note: for now, this part requires a few SQL queries that we provide in this notebook to properly format the review app into training dataset.*
 # MAGIC
-# MAGIC *We'll update this notebook soon with an simpler version - stay tuned!*
-# MAGIC
 # MAGIC <!-- Collect usage data (view). Remove it to disable collection or disable tracker during installation. View README for more details.  -->
 # MAGIC <img width="1px" src="https://ppxrzfxige.execute-api.us-west-2.amazonaws.com/v1/analytics?category=data-science&org_id=1444828305810485&notebook=%2F03-advanced-app%2F03-Offline-Evaluation&demo_name=llm-rag-chatbot&event=VIEW&path=%2F_dbdemos%2Fdata-science%2Fllm-rag-chatbot%2F03-advanced-app%2F03-Offline-Evaluation&version=1">
 
@@ -151,7 +149,7 @@ display(eval_dataset)
 # MAGIC
 # MAGIC *Note: the eval app logs may take some time to be available to you. If the dataset is empty, wait a bit.*
 # MAGIC
-# MAGIC To simplify the demo and make sure you don't have to craft your own eval dataset, we saved a ready-to-use eval dataset already pre-generated for you. We'll use this one for the demo instead.
+# MAGIC To streamline the demo and save you time, we've already prepared a ready-to-use evaluation dataset for you. You won't need to create one from scratch. For this demo, we'll be using this pre-generated dataset, which includes data related to a Q&A chatbot that uses custom PDFs from our knowledge base for evaluation purposes.
 
 # COMMAND ----------
 
@@ -178,6 +176,18 @@ pip_requirements = mlflow.pyfunc.get_model_dependencies(f"runs:/{model.run_id}/c
 
 # MAGIC %md
 # MAGIC ## Run our evaluation from the dataset!
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Evaluation is a key part of deploying a RAG application. Databricks simplify this tasks with specialized LLM models tuned to evaluate your bot's quality/cost/latency, even if ground truth is not available.
+# MAGIC
+# MAGIC Mosaic AI Agent Evaluation evaluates:
+# MAGIC 1. Answer correctness - requires ground truth
+# MAGIC 2. Hallucination / groundness - no ground truth required
+# MAGIC 3. Answer relevance - no ground truth required
+# MAGIC 4. Retrieval precision - no ground truth required
+# MAGIC 5. (Lack of) Toxicity - no ground truth required
 
 # COMMAND ----------
 
