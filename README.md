@@ -31,7 +31,7 @@ The vectors will then be used to perform real-time similarity search during infe
 
 
 ## Cluster Setup:
-For this notebook, we recommend using the DBRX 15.4 LTS Runtime for optimal performance.
+For this notebook, we recommend using the DBRX 14.3 LTS Runtime for optimal performance.
 
 ## How to test:
 Example Prompts to Test the Pipeline
